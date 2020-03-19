@@ -3,7 +3,8 @@
 
 #define FSH_RL_BUFSIZE 1024
 #define FSH_TOK_BUFSIZE 64
-#define FSH_TOK_DELIM " \t\r\n\a"
+
+#define FSH_VERSION "0.2.1"
 
 #include <stdio.h>
 
@@ -19,11 +20,17 @@ enum LOGLEVEL {
 };
 
 Config *fsh_config;
+Var *global_variables;
+
 int last_status;
 enum LOGLEVEL fsh_loglevel;
 
-
 size_t kv_len;
+
+
+char **var_keys;
+char **var_values;
+size_t var_len;
 
 //fsh.c
 void _fsh_exit(int status);
@@ -37,6 +44,8 @@ char *get_home_dir();
 char *get_user_name();
 char *get_host_name();
 char *get_cwd();
+int count_chars(const char *str, char c);
+
 
 //runner.c
 int launch(char **args);
@@ -58,6 +67,12 @@ int fsh_exit(char **args);
 void fsh_log(enum LOGLEVEL msg_type, const char *msg);
 void fsh_logf(enum LOGLEVEL msg_type, const char *fmt, ...);
 
-
+//vars.c
+int is_potential_var_decl(const char *line);
+char *substitute_vars(const char *line);
+void interpret_var_line(const char *line);
+void add_var(const char *key, const char *value);
+void remove_var(const char *key);
+void change_var(const char *key, const char *newval);
 
 #endif

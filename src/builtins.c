@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <string.h>
 #include "fsh.h"
 
 char *builtin_str[] = {
@@ -11,6 +12,38 @@ char *builtin_desc[] = {
     "change your working directory",
     "show fsh help (this menu)",
     "exit fsh"
+};
+
+char *builtin_help[] = {
+    "cd [directory]\n"
+    "\n"
+    "Where directory can be a relative or absolute path.\n"
+    "You can also leave out [directory] to change the working\n"
+    "directory to your home directory.\n"
+    "\n"
+    "examples:\n"
+    "\tcd foo/bar\n"
+    "\tcd /usr\n"
+    "\tcd",
+
+    "help [command]\n"
+    "\n"
+    "Where command can be any builtin fsh command.\n"
+    "specify a command to get more information about the\n"
+    "particular command or type help without any arguments\n"
+    "to list all available builtin fsh commands\n"
+    "\n"
+    "examples:\n"
+    "\thelp cd\n"
+    "\thelp",
+
+    "exit\n"
+    "\n"
+    "Close the current fsh session and return to previous program.\n"
+    "no arguments are needed for exit\n"
+    "\n"
+    "examples:\n"
+    "\texit"
 };
 
 int (*builtin_func[]) (char**) = {
@@ -48,7 +81,17 @@ int fsh_help(char **args) {
 
         printf("Use the man command for information on other programs.\n");
     } else {
-        printf("Implement me, to show help for wanted command!\n");
+        int builtin_idx = -1;
+        for (int i = 0; i < fsh_num_builtins(); i++) {
+            if (!strcmp(args[1], builtin_str[i])) {
+                builtin_idx = i;
+            }
+        }
+        if (builtin_idx != -1) {
+            printf("usage: %s\n", builtin_help[builtin_idx]);
+        } else {
+            fsh_printerr("fsh: comamnd not found!\n");
+        }
     }
 
     return 1;
