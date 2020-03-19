@@ -1,4 +1,4 @@
-fedit: src/fsh.h src/log.c src/io.c src/builtins.c src/runner.c src/utils.c src/fsh.c
+fsh: src/fsh.h src/log.c src/io.c src/builtins.c src/runner.c src/utils.c src/fsh.c
 		$(CC) -g src/log.c src/io.c src/builtins.c src/runner.c src/utils.c src/fsh.c -o fsh -Wall -Wextra -pedantic
 
 install: fsh
