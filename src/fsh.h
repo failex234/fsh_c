@@ -34,6 +34,7 @@ enum keys {
 
 Config *fsh_config;
 char *ps1;
+size_t ps1_len;
 
 int last_status;
 int exitme;

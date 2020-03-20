@@ -40,6 +40,8 @@ void fsh_loop() {
 
     do {
         ps1 = parse_ps1();
+	ps1_len = strlen(ps1);
+	cursor_pos_x = (int) ps1_len;
         printf("\r\n%s", ps1);
         fflush(stdout);
 

@@ -184,6 +184,7 @@ int process_key_press() {
 			    printf("%s", input_buf);
 
 			    input_buf_len = last_cmd_len;
+			    cursor_pos_x = ps1_len + input_buf_len;
 		    }
             	break;
 	    }
@@ -205,6 +206,7 @@ int process_key_press() {
         case '\r':
         case '\n':
             printf("\r\n");
+	    cursor_pos_x = ps1_len;
             return 1;
         case '\t':
             printf(" <WILDCARD> ");
@@ -212,15 +214,17 @@ int process_key_press() {
         case CTRL_KEY('h'):
         case DEL_KEY:
         case BACKSPACE:
-        default:
-	    if (c != CTRL_KEY('h') && c != DEL_KEY) {
-            	printf("%c", c);
-            	add_to_input_buffer(c);
-	    } else {
+	    if (cursor_pos_x > ps1_len) {
 		printf("%c", 8);
 		add_to_input_buffer(BACKSPACE);
+
+		cursor_pos_x--;
 	    }
             break;
+	default:
+	    printf("%c", c);
+	    add_to_input_buffer(c);
+	    cursor_pos_x++;
     }
     fflush(stdout);
     return 0;
