@@ -39,7 +39,15 @@ void add_to_input_buffer(char c) {
 }
 
 char *get_input_buf_str() {
-	char *input_str = get_input_buf_no_clear();
+    char *input_str = get_input_buf_no_clear();
+
+    if (!last_cmd) {
+	last_cmd = (char*) malloc(input_buf_len + 1);
+    } else {
+	last_cmd = (char*) realloc(last_cmd, input_buf_len + 1);
+    }
+
+    memcpy(last_cmd, input_str, input_buf_len + 1);
 
     free(input_buf);
     input_buf_len = 0;
@@ -65,7 +73,6 @@ void enable_raw_mode() {
 
     struct termios raw_mode = original_termios;
     raw_mode.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-    raw_mode.c_oflag &= ~(OPOST);
     raw_mode.c_cflag |= (CS8);
     raw_mode.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
 
@@ -161,10 +168,27 @@ int process_key_press() {
             printf("-->");
             break;
         case ARROW_UP:
-            printf("/\\");
-            break;
+	    {
+		    if (last_cmd) {
+			    size_t last_cmd_len = strlen(last_cmd);
+			    input_buf = (char*) realloc(input_buf, last_cmd_len + 1);
+			    memcpy(input_buf, last_cmd, last_cmd_len + 1);
+
+			    free(last_cmd);
+			    last_cmd = NULL;
+
+			    while(input_buf_len--) {
+				    putc(8, stdout);
+			    }
+
+			    printf("%s", input_buf);
+
+			    input_buf_len = last_cmd_len;
+		    }
+            	break;
+	    }
         case ARROW_DOWN:
-            printf("\\/");
+	    //TODO
             break;
         case HOME_KEY:
             printf("pos1");

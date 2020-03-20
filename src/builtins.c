@@ -15,34 +15,34 @@ char *builtin_desc[] = {
 };
 
 char *builtin_help[] = {
-    "cd [directory]\n"
-    "\n"
-    "Where directory can be a relative or absolute path.\n"
-    "You can also leave out [directory] to change the working\n"
-    "directory to your home directory.\n"
-    "\n"
-    "examples:\n"
-    "\tcd foo/bar\n"
-    "\tcd /usr\n"
+    "cd [directory]\r\n"
+    "\r\n"
+    "Where directory can be a relative or absolute path.\r\n"
+    "You can also leave out [directory] to change the working\r\n"
+    "directory to your home directory.\r\n"
+    "\r\n"
+    "examples:\r\n"
+    "\tcd foo/bar\r\n"
+    "\tcd /usr\r\n"
     "\tcd",
 
-    "help [command]\n"
-    "\n"
-    "Where command can be any builtin fsh command.\n"
-    "specify a command to get more information about the\n"
-    "particular command or type help without any arguments\n"
-    "to list all available builtin fsh commands\n"
-    "\n"
-    "examples:\n"
-    "\thelp cd\n"
+    "help [command]\r\n"
+    "\r\n"
+    "Where command can be any builtin fsh command.\r\n"
+    "specify a command to get more information about the\r\n"
+    "particular command or type help without any arguments\r\n"
+    "to list all available builtin fsh commands\r\n"
+    "\r\n"
+    "examples:\r\n"
+    "\thelp cd\r\n"
     "\thelp",
 
-    "exit\n"
-    "\n"
-    "Close the current fsh session and return to previous program.\n"
-    "no arguments are needed for exit\n"
-    "\n"
-    "examples:\n"
+    "exit\r\n"
+    "\r\n"
+    "Close the current fsh session and return to previous program.\r\n"
+    "no arguments are needed for exit\r\n"
+    "\r\n"
+    "examples:\r\n"
     "\texit"
 };
 
@@ -58,7 +58,7 @@ int fsh_num_builtins() {
 
 int fsh_cd(char **args) {
     if (args[1] == NULL) {
-        fsh_printf("go to home directory NOT IMPLEMENTED!\n");
+        fsh_printf("go to home directory NOT IMPLEMENTED!\r\n");
     } else {
         if (chdir(args[1]) != 0) {
             perror("fsh");
@@ -71,15 +71,15 @@ int fsh_cd(char **args) {
 int fsh_help(char **args) {
     if (args[1] == NULL) {
         int i;
-        printf("Felix Naumann's FSH\n");
-        printf("Type program names and arguments, and hit enter.\n");
-        printf("The following are built in:\n");
+        printf("Felix Naumann's FSH\r\n");
+        printf("Type program names and arguments, and hit enter.\r\n");
+        printf("The following are built in:\r\n");
 
         for (i = 0; i < fsh_num_builtins(); i++) {
-            printf(" %s - %s\n", builtin_str[i], builtin_desc[i]);
+            printf(" %s - %s\r\n", builtin_str[i], builtin_desc[i]);
         }
 
-        printf("Use the man command for information on other programs.\n");
+        printf("Use the man command for information on other programs.\r\n");
     } else {
         int builtin_idx = -1;
         for (int i = 0; i < fsh_num_builtins(); i++) {
@@ -88,9 +88,9 @@ int fsh_help(char **args) {
             }
         }
         if (builtin_idx != -1) {
-            printf("usage: %s\n", builtin_help[builtin_idx]);
+            printf("usage: %s\r\n", builtin_help[builtin_idx]);
         } else {
-            fsh_printerr("fsh: comamnd not found!\n");
+            fsh_printerr("fsh: comamnd not found!\r\n");
         }
     }
 

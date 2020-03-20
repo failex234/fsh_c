@@ -33,6 +33,7 @@ enum keys {
 };
 
 Config *fsh_config;
+char *ps1;
 
 int last_status;
 int exitme;
@@ -45,8 +46,11 @@ char **var_keys;
 char **var_values;
 size_t var_len;
 
+char *last_cmd;
 char *input_buf;
 size_t input_buf_len;
+
+int cursor_pos_x;
 
 //fsh.c
 void _fsh_exit(int status);

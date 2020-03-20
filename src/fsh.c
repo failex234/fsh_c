@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <getopt.h>
 
 #include "fsh.h"
@@ -32,13 +33,14 @@ void fsh_loop() {
     char *line, **args;
     int status;
     int ret = 0;
-
+	
+    last_cmd = NULL;
     input_buf = NULL;
     input_buf_len = 0;
 
     do {
-        char *proc_ps1 = parse_ps1();
-        printf("\r\n%s", proc_ps1);
+        ps1 = parse_ps1();
+        printf("\r\n%s", ps1);
         fflush(stdout);
 
         //Get input and split it correctly so that we can
@@ -50,6 +52,10 @@ void fsh_loop() {
         args = split_line(line);
         status = execute(args);
 
+	size_t line_len = strlen(line);
+	last_cmd = (char*) realloc(last_cmd, line_len + 1);
+	memcpy(last_cmd, line, line_len + 1);
+
         free(line);
         char **args_ptr = args;
 
@@ -58,7 +64,6 @@ void fsh_loop() {
             args++;
         }
         free(args_ptr);
-        free(proc_ps1);
 
     } while (status && !exitme);
 }
