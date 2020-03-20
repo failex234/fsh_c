@@ -58,7 +58,9 @@ void fsh_loop() {
 	last_cmd = (char*) realloc(last_cmd, line_len + 1);
 	memcpy(last_cmd, line, line_len + 1);
 
-        free(line);
+	if (input_buf_len) {
+        	free(line);
+	}
         char **args_ptr = args;
 
         while(*args) {
