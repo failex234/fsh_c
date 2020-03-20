@@ -19,10 +19,23 @@ enum LOGLEVEL {
     LOGLEVEL_LOG
 };
 
+enum keys {
+    	BACKSPACE = 127,
+	ARROW_LEFT 	= 1000,
+	ARROW_RIGHT,
+	ARROW_UP,
+	ARROW_DOWN,
+	DEL_KEY,
+	HOME_KEY,
+	END_KEY,
+	PAGE_UP,
+	PAGE_DOWN,
+};
+
 Config *fsh_config;
-Var *global_variables;
 
 int last_status;
+int exitme;
 enum LOGLEVEL fsh_loglevel;
 
 size_t kv_len;
@@ -31,6 +44,9 @@ size_t kv_len;
 char **var_keys;
 char **var_values;
 size_t var_len;
+
+char *input_buf;
+size_t input_buf_len;
 
 //fsh.c
 void _fsh_exit(int status);
@@ -74,5 +90,14 @@ void interpret_var_line(const char *line);
 void add_var(const char *key, const char *value);
 void remove_var(const char *key);
 void change_var(const char *key, const char *newval);
+
+//terminal.c
+void enable_raw_mode();
+void disable_raw_mode();
+void set_text_color();
+void set_bg_color();
+int process_key_press();
+char *get_input_buf_str();
+char *get_input_buf_no_clear();
 
 #endif

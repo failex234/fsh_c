@@ -1,5 +1,5 @@
-fsh: src/fsh.h src/log.c src/io.c src/builtins.c src/runner.c src/utils.c src/fsh.c
-		$(CC) -g src/log.c src/io.c src/builtins.c src/runner.c src/utils.c src/fsh.c -o fsh -Wall -Wextra -pedantic
+fsh: src/fsh.h src/log.c src/io.c src/builtins.c src/runner.c src/utils.c src/terminal.c src/fsh.c
+		$(CC) -g src/log.c src/io.c src/builtins.c src/runner.c src/utils.c src/terminal.c src/fsh.c -o fsh -Wall -Wextra -pedantic
 
 install: fsh
 		cp fsh ${DESTDIR}/usr/bin

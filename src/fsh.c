@@ -31,14 +31,22 @@ void print_version(char *prgname) {
 void fsh_loop() {
     char *line, **args;
     int status;
+    int ret = 0;
+
+    input_buf = NULL;
+    input_buf_len = 0;
 
     do {
         char *proc_ps1 = parse_ps1();
-        printf("%s", proc_ps1);
+        printf("\r\n%s", proc_ps1);
+        fflush(stdout);
 
         //Get input and split it correctly so that we can
         //parse and interpret it
-        line = read_line();
+        while(!process_key_press());
+	if (exitme) break;
+
+        line = get_input_buf_str();
         args = split_line(line);
         status = execute(args);
 
@@ -52,12 +60,13 @@ void fsh_loop() {
         free(args_ptr);
         free(proc_ps1);
 
-    } while (status);
+    } while (status && !exitme);
 }
 
 
 int main(int argc, char **argv) {
     fsh_loglevel = LOGLEVEL_ERROR;
+    exitme = 0;
 
     int c = 0;
     while (1) {
@@ -86,8 +95,11 @@ int main(int argc, char **argv) {
     //Load configs
     fsh_read_config();
 
+    enable_raw_mode();
     //Start main loop
     fsh_loop();
+
+    disable_raw_mode();
 
     //Cleanup
     return EXIT_SUCCESS;

@@ -241,7 +241,6 @@ char *parse_ps1() {
     new_ps1[ps1_idx] = '\0';
 
     free(host_name);
-    free(cwd);
     return new_ps1;
 }
 
