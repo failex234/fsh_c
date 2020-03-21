@@ -227,7 +227,7 @@ char *parse_ps1() {
                 ps1_idx += lenwd;
             } else if (*ps1_ptr == '$') {
                 uid_t user = getuid();
-                char uidchar = (user == 0 ? '$' : '#');
+                char uidchar = (user == 0 ? '#' : '$');
                 new_ps1[ps1_idx++] = uidchar;
             } else {
                 new_ps1[ps1_idx++] = *ps1_ptr;

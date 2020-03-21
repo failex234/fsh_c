@@ -4,7 +4,7 @@
 #define FSH_RL_BUFSIZE 1024
 #define FSH_TOK_BUFSIZE 64
 
-#define FSH_VERSION "0.2.1"
+#define FSH_VERSION "0.3.0"
 
 #include <stdio.h>
 

@@ -26,13 +26,13 @@ void print_help(char *prgname) {
 };
 
 void print_version(char *prgname) {
-    printf("%s\n", FSH_VERSION);
+    printf("%s (%s %s)\n", FSH_VERSION, __DATE__, __TIME__);
 }
 
 void fsh_loop() {
     char *line, **args;
+    size_t line_len;
     int status;
-    int ret = 0;
 	
     last_cmd = NULL;
     input_buf = NULL;
@@ -42,7 +42,7 @@ void fsh_loop() {
         ps1 = parse_ps1();
 	ps1_len = strlen(ps1);
 	cursor_pos_x = (int) ps1_len;
-        printf("\r\n%s", ps1);
+        printf("%s", ps1);
         fflush(stdout);
 
         //Get input and split it correctly so that we can
@@ -50,24 +50,28 @@ void fsh_loop() {
         while(!process_key_press());
 	if (exitme) break;
 
-        line = get_input_buf_str();
-        args = split_line(line);
-        status = execute(args);
+	line = get_input_buf_str();
+	line_len = strlen(line);
 
-	size_t line_len = strlen(line);
-	last_cmd = (char*) realloc(last_cmd, line_len + 1);
-	memcpy(last_cmd, line, line_len + 1);
+	if (line_len) {
+		args = split_line(line);
 
-	if (input_buf_len) {
-        	free(line);
+		status = execute(args);
+
+		size_t line_len = strlen(line);
+		last_cmd = (char*) realloc(last_cmd, line_len + 1);
+		memcpy(last_cmd, line, line_len + 1);
+
+		free(line);
+
+		char **args_ptr = args;
+
+		while(*args) {
+			free(*args);
+			args++;
+		}
+		free(args_ptr);
 	}
-        char **args_ptr = args;
-
-        while(*args) {
-            free(*args);
-            args++;
-        }
-        free(args_ptr);
 
     } while (status && !exitme);
 }

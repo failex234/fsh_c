@@ -149,9 +149,11 @@ int process_key_press() {
     int nread;
 
     switch(c) {
-        case CTRL_KEY('d'):
         case CTRL_KEY('c'):
-            printf("\r\n");
+	    printf("^C\n");
+	    return 1;
+        case CTRL_KEY('d'):
+            printf("exit\n");
             exitme = 1;
 	    return 1;
 	case CTRL_KEY('l'):
@@ -162,10 +164,8 @@ int process_key_press() {
 	    	break;
 	    }
         case ARROW_LEFT:
-            printf("<--");
             break;
         case ARROW_RIGHT:
-            printf("-->");
             break;
         case ARROW_UP:
 	    {
@@ -174,7 +174,9 @@ int process_key_press() {
 			    input_buf = (char*) realloc(input_buf, last_cmd_len + 1);
 			    memcpy(input_buf, last_cmd, last_cmd_len + 1);
 
-			    free(last_cmd);
+			    if (last_cmd_len) {
+				    free(last_cmd);
+			    }
 			    last_cmd = NULL;
 
 			    while(input_buf_len--) {
@@ -192,29 +194,25 @@ int process_key_press() {
 	    //TODO
             break;
         case HOME_KEY:
-            printf("pos1");
             break;
         case END_KEY:
-            printf("ende");
             break;
         case PAGE_UP:
-            printf("P /\\");
             break;
         case PAGE_DOWN:
-            printf("P \\/");
-            break;
         case '\r':
         case '\n':
-            printf("\r\n");
+            printf("\n");
 	    cursor_pos_x = ps1_len;
             return 1;
         case '\t':
-            printf(" <WILDCARD> ");
             break;
         case CTRL_KEY('h'):
         case DEL_KEY:
         case BACKSPACE:
 	    if (cursor_pos_x > ps1_len) {
+		printf("%c", 8);
+		printf("%c", ' ');
 		printf("%c", 8);
 		add_to_input_buffer(BACKSPACE);
 
