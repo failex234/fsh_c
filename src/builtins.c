@@ -3,53 +3,53 @@
 #include "fsh.h"
 
 char *builtin_str[] = {
-    "cd",
-    "help",
-    "exit"
+        "cd",
+        "help",
+        "exit"
 };
 
 char *builtin_desc[] = {
-    "change your working directory",
-    "show fsh help (this menu)",
-    "exit fsh"
+        "change your working directory",
+        "show fsh help (this menu)",
+        "exit fsh"
 };
 
 char *builtin_help[] = {
-    "cd [directory]\r\n"
-    "\r\n"
-    "Where directory can be a relative or absolute path.\r\n"
-    "You can also leave out [directory] to change the working\r\n"
-    "directory to your home directory.\r\n"
-    "\r\n"
-    "examples:\r\n"
-    "\tcd foo/bar\r\n"
-    "\tcd /usr\r\n"
-    "\tcd",
+        "cd [directory]\r\n"
+        "\r\n"
+        "Where directory can be a relative or absolute path.\r\n"
+        "You can also leave out [directory] to change the working\r\n"
+        "directory to your home directory.\r\n"
+        "\r\n"
+        "examples:\r\n"
+        "\tcd foo/bar\r\n"
+        "\tcd /usr\r\n"
+        "\tcd",
 
-    "help [command]\r\n"
-    "\r\n"
-    "Where command can be any builtin fsh command.\r\n"
-    "specify a command to get more information about the\r\n"
-    "particular command or type help without any arguments\r\n"
-    "to list all available builtin fsh commands\r\n"
-    "\r\n"
-    "examples:\r\n"
-    "\thelp cd\r\n"
-    "\thelp",
+        "help [command]\r\n"
+        "\r\n"
+        "Where command can be any builtin fsh command.\r\n"
+        "specify a command to get more information about the\r\n"
+        "particular command or type help without any arguments\r\n"
+        "to list all available builtin fsh commands\r\n"
+        "\r\n"
+        "examples:\r\n"
+        "\thelp cd\r\n"
+        "\thelp",
 
-    "exit\r\n"
-    "\r\n"
-    "Close the current fsh session and return to previous program.\r\n"
-    "no arguments are needed for exit\r\n"
-    "\r\n"
-    "examples:\r\n"
-    "\texit"
+        "exit\r\n"
+        "\r\n"
+        "Close the current fsh session and return to previous program.\r\n"
+        "no arguments are needed for exit\r\n"
+        "\r\n"
+        "examples:\r\n"
+        "\texit"
 };
 
 int (*builtin_func[]) (char**) = {
-    &fsh_cd,
-    &fsh_help,
-    &fsh_exit
+        &fsh_cd,
+        &fsh_help,
+        &fsh_exit
 };
 
 int fsh_num_builtins() {
@@ -58,7 +58,9 @@ int fsh_num_builtins() {
 
 int fsh_cd(char **args) {
     if (args[1] == NULL) {
-        fsh_printf("go to home directory NOT IMPLEMENTED!\r\n");
+        if (chdir(get_home_dir()) != 0) {
+            perror("fsh");
+        }
     } else {
         if (chdir(args[1]) != 0) {
             perror("fsh");
@@ -98,5 +100,6 @@ int fsh_help(char **args) {
 }
 
 int fsh_exit(char **args) {
+    exitme = 1;
     return 0;
 }

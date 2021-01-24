@@ -3,10 +3,12 @@
 
 #define FSH_RL_BUFSIZE 1024
 #define FSH_TOK_BUFSIZE 64
+#define HOST_NAME_MAX 32
 
 #define FSH_VERSION "0.3.0"
 
 #include <stdio.h>
+
 
 typedef struct config {
     char *path;
@@ -20,16 +22,16 @@ enum LOGLEVEL {
 };
 
 enum keys {
-    	BACKSPACE = 127,
-	ARROW_LEFT 	= 1000,
-	ARROW_RIGHT,
-	ARROW_UP,
-	ARROW_DOWN,
-	DEL_KEY,
-	HOME_KEY,
-	END_KEY,
-	PAGE_UP,
-	PAGE_DOWN,
+    BACKSPACE = 127,
+    ARROW_LEFT 	= 1000,
+    ARROW_RIGHT,
+    ARROW_UP,
+    ARROW_DOWN,
+    DEL_KEY,
+    HOME_KEY,
+    END_KEY,
+    PAGE_UP,
+    PAGE_DOWN,
 };
 
 Config *fsh_config;

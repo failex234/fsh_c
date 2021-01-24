@@ -1,5 +1,8 @@
 #include "fsh.h"
 
+#include <string.h>
+#include <stdlib.h>
+
 int is_potential_var_decl(const char *line) {
     return count_chars(line, '=');
 }
