@@ -57,7 +57,9 @@ void fsh_loop() {
         if (line_len) {
             args = split_line(line);
 
+            fsh_logf(LOGLEVEL_LOG, "Running command %s", args[0]);
             status = execute(args);
+            reset_color();
 
             size_t line_len = strlen(line);
             last_cmd = (char*) realloc(last_cmd, line_len + 1);
@@ -106,14 +108,20 @@ int main(int argc, char **argv) {
         }
     }
 
+    make_config_folder();
+    openlog();
     //Load configs
     fsh_read_config();
 
     enable_raw_mode();
+
+    reset_color();
+
     //Start main loop
     fsh_loop();
 
     disable_raw_mode();
+    reset_color();
 
     //Cleanup
     return EXIT_SUCCESS;

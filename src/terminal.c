@@ -40,6 +40,33 @@ void add_to_input_buffer(char c) {
     }
 }
 
+void add_to_input_buffer_revolution(char c, size_t offset) {
+    size_t location = offset < input_buf_len ? offset : input_buf_len;
+    switch (c) {
+        case BACKSPACE:
+            if (input_buf_len > 1) {
+                memmove(input_buf + offset - 1, input_buf + offset, input_buf_len - offset + 1);
+                input_buf = (char *) realloc(input_buf, --input_buf_len + 1);
+            } else if (input_buf_len == 1) {
+                free(input_buf);
+                input_buf_len = 0;
+            }
+            break;
+        default:
+            if (input_buf_len != 0) {
+                input_buf = (char *) realloc(input_buf, ++input_buf_len + 1);
+                //Make some space for the one character that should get inserted
+                memmove(input_buf + offset + 1, input_buf + offset, input_buf_len - offset + 1);
+                input_buf[offset] = c;
+            } else {
+                input_buf = (char *) malloc(++input_buf_len + 1);
+                input_buf[input_buf_len - 1] = c;
+            }
+            input_buf[input_buf_len] = '\0';
+            break;
+    }
+}
+
 char *get_input_buf_str() {
     char *input_str = get_input_buf_no_clear();
 
@@ -181,19 +208,69 @@ int process_key_press() {
             printf("%s%s", parse_ps1(), get_input_buf_no_clear());
             break;
         }
+        case CTRL_KEY('a'): {
+            int backup = cursor_pos_x - ps1_len;
+            while(backup > 0) {
+                putc(8, stdout);
+                backup--;
+            }
+            cursor_pos_x = ps1_len;
+            break;
+        }
         case ARROW_LEFT:
+            if (cursor_pos_x > ps1_len) {
+                putc(8, stdout);
+                fflush(stdout);
+                cursor_pos_x--;
+            }
             break;
         case ARROW_RIGHT:
+            if (cursor_pos_x < input_buf_len + ps1_len) {
+                //TODO: Duplicated code
+                //Redraw the input buf
+                int backup = cursor_pos_x - ps1_len;
+
+                while(backup > 0) {
+                    putc(8, stdout);
+                    backup--;
+                }
+
+                int color = RED;
+                int result = search_in_path(input_buf);
+                if (result) {
+                    color = GREEN;
+                }
+
+                printf("\e[%dm%s", color, input_buf);
+
+
+                //Move the cursor back
+                backup = ps1_len + input_buf_len - cursor_pos_x - 1;
+                while(backup > 0) {
+                    putc(8, stdout);
+                    backup--;
+                }
+
+                cursor_pos_x++;
+
+            }
             break;
         case ARROW_UP: {
             if (last_cmd) {
                 size_t last_cmd_len = strlen(last_cmd);
+
+                if (input_buf && input_buf_len > 0) {
+                    free(input_buf);
+                    input_buf_len = 0;
+                }
+
                 input_buf = (char *) malloc(last_cmd_len + 1);
                 memcpy(input_buf, last_cmd, last_cmd_len + 1);
 
                 if (last_cmd_len) {
                     free(last_cmd);
                 }
+
                 last_cmd = NULL;
 
                 while (input_buf_len--) {
@@ -229,23 +306,65 @@ int process_key_press() {
         case DEL_KEY:
         case BACKSPACE:
             if (cursor_pos_x > ps1_len) {
+                //TODO: Duplicated code
                 printf("%c", 8);
                 printf("%c", ' ');
                 printf("%c", 8);
-                add_to_input_buffer(BACKSPACE);
+                add_to_input_buffer_revolution(BACKSPACE, cursor_pos_x - ps1_len);
+
+                if (input_buf_len > 0) {
+                    int backup = cursor_pos_x - ps1_len - 1;
+                    while(backup > 0) {
+                        putc(8, stdout);
+                        backup--;
+                    }
+
+                    int color = RED;
+                    int result = search_in_path(input_buf);
+                    if (result) {
+                        color = GREEN;
+                    }
+
+                    printf("\e[%dm%s", color, input_buf);
+
+                    //Move the cursor back
+                    backup = ps1_len + input_buf_len - cursor_pos_x;
+                    while(backup > 0) {
+                        putc(8, stdout);
+                        backup--;
+                    }
+
+                }
 
                 cursor_pos_x--;
             }
             break;
         default:
-            add_to_input_buffer(c);
+            //TODO: Duplicated code
+            add_to_input_buffer_revolution(c, cursor_pos_x - ps1_len);
             int color = RED;
             int result = search_in_path(input_buf);
             if (result) {
                 color = GREEN;
             }
-            printf("\e[%dm%c", color, c);
-            //printf("%c", c);
+            if (cursor_pos_x == input_buf_len - 1) {
+                printf("\e[%dm%c", color, c);
+            } else {
+                int backup = cursor_pos_x - ps1_len;
+
+                while (backup > 0) {
+                    putc(8, stdout);
+                    backup--;
+                }
+                printf("\e[%dm%s", color, input_buf);
+
+                //Move the cursor back
+                backup = ps1_len + input_buf_len - cursor_pos_x - 1;
+                while(backup > 0) {
+                    putc(8, stdout);
+                    backup--;
+                }
+            }
             cursor_pos_x++;
     }
     fflush(stdout);
@@ -263,4 +382,8 @@ void set_bg_color(uint8_t color) {
     if (fsh_config) {
         fsh_config->bg_color = color + 10;
     }
+}
+
+void reset_color() {
+    printf("\e[%dm", RESET);
 }

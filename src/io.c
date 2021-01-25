@@ -41,7 +41,7 @@ void fsh_read_config() {
     fsh_config = (Config*) malloc(sizeof(Config));
 
     if (!conf) {
-        fsh_logf(LOGLEVEL_LOG, "config file %s doens't exist, loading default config\n", configpath);
+        fsh_logf(LOGLEVEL_LOG, "config file %s doens't exist, loading default config", configpath);
 
         char *syspath = getenv("PATH");
 

@@ -17,13 +17,14 @@ char *_fsh_get_loglevel_id() {
 }
 
 void fsh_log(enum LOGLEVEL msg_type, const char *msg) {
-    if (msg_type <= fsh_loglevel) {
-        printf("%s %s", _fsh_get_loglevel_id(), msg);
+    if (msg_type <= fsh_loglevel && fsh_log_file) {
+        fprintf(fsh_log_file, "%s %s\n", _fsh_get_loglevel_id(), msg);
+        fflush(fsh_log_file);
     }
 }
 
 void fsh_logf(enum LOGLEVEL msg_type, const char *fmt, ...) {
-    if (msg_type <= fsh_loglevel) {
+    if (msg_type <= fsh_loglevel && fsh_log_file) {
         char *buf = (char*) malloc(2048);
 
         va_list arg;
@@ -33,6 +34,7 @@ void fsh_logf(enum LOGLEVEL msg_type, const char *fmt, ...) {
 
         va_end(arg);
 
-        printf("%s %s", _fsh_get_loglevel_id(), buf);
+        fprintf(fsh_log_file, "%s %s\n", _fsh_get_loglevel_id(), buf);
+        fflush(fsh_log_file);
     }
 }

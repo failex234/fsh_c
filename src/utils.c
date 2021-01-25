@@ -7,6 +7,8 @@
 
 #include "fsh.h"
 
+extern char *builtin_str[];
+
 char *read_line() {
     int pos = 0, c, curr_buf_size = FSH_RL_BUFSIZE;
     char *buf = (char*) malloc(curr_buf_size); 
@@ -299,6 +301,13 @@ char *get_cwd() {
 }
 
 int search_in_path(const char *binarypath) {
+
+    for (int i = 0; i < fsh_num_builtins(); i++) {
+        if (!strcmp(binarypath, builtin_str[i])) {
+            return 1;
+        }
+    }
+
     FILE *incwd = fopen(binarypath, "r");
     if (incwd) {
         fclose(incwd);

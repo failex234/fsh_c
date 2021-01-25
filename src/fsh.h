@@ -5,7 +5,7 @@
 #define FSH_TOK_BUFSIZE 64
 #define HOST_NAME_MAX 32
 
-#define FSH_VERSION "0.3.0"
+#define FSH_VERSION "0.4.2"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -70,8 +70,16 @@ size_t input_buf_len;
 
 int cursor_pos_x;
 
+FILE *fsh_log_file;
+
 //fsh.c
 void _fsh_exit(int status);
+
+//configs.c
+void openlog();
+void make_config_folder();
+FILE *get_fsh_file();
+char *get_fsh_path();
 
 //utils.c
 char *read_line();
@@ -119,6 +127,7 @@ void enable_raw_mode();
 void disable_raw_mode();
 void set_fg_color(uint8_t color);
 void set_bg_color(uint8_t color);
+void reset_color();
 int process_key_press();
 char *get_input_buf_str();
 char *get_input_buf_no_clear();
