@@ -4,7 +4,6 @@
 #include <termios.h>
 #include <errno.h>
 #include <string.h>
-#include <assert.h>
 
 #include "fsh.h"
 
@@ -22,7 +21,8 @@ void add_to_input_buffer(char c) {
     switch (c) {
         case BACKSPACE:
             if (input_buf_len > 1) {
-                input_buf = (char *) realloc(input_buf, --input_buf_len);
+                input_buf = (char *) realloc(input_buf, --input_buf_len + 1);
+                input_buf[input_buf_len] = '\0';
             } else if (input_buf_len == 1) {
                 free(input_buf);
                 input_buf_len = 0;
@@ -30,11 +30,12 @@ void add_to_input_buffer(char c) {
             break;
         default:
             if (input_buf_len != 0) {
-                input_buf = (char *) realloc(input_buf, ++input_buf_len);
+                input_buf = (char *) realloc(input_buf, ++input_buf_len + 1);
             } else {
-                input_buf = (char *) malloc(++input_buf_len);
+                input_buf = (char *) malloc(++input_buf_len + 1);
             }
             input_buf[input_buf_len - 1] = c;
+            input_buf[input_buf_len] = '\0';
             break;
     }
 }
@@ -218,6 +219,7 @@ int process_key_press() {
         case PAGE_DOWN:
         case '\r':
         case '\n':
+            set_fg_color(WHITE);
             printf("\n");
             cursor_pos_x = ps1_len;
             return 1;
@@ -236,10 +238,29 @@ int process_key_press() {
             }
             break;
         default:
-            printf("%c", c);
             add_to_input_buffer(c);
+            int color = RED;
+            int result = search_in_path(input_buf);
+            if (result) {
+                color = GREEN;
+            }
+            printf("\e[%dm%c", color, c);
+            //printf("%c", c);
             cursor_pos_x++;
     }
     fflush(stdout);
     return 0;
+}
+
+void set_fg_color(uint8_t color) {
+    if (fsh_config) {
+        fsh_config->fg_color = color;
+        printf("\e[%dm", color);
+    }
+}
+
+void set_bg_color(uint8_t color) {
+    if (fsh_config) {
+        fsh_config->bg_color = color + 10;
+    }
 }

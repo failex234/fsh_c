@@ -8,11 +8,14 @@
 #define FSH_VERSION "0.3.0"
 
 #include <stdio.h>
+#include <stdint.h>
 
 
 typedef struct config {
-    char *path;
     char *ps1;
+    char *path;
+    uint8_t fg_color;
+    uint8_t bg_color;
 } Config;
 
 enum LOGLEVEL {
@@ -32,6 +35,18 @@ enum keys {
     END_KEY,
     PAGE_UP,
     PAGE_DOWN,
+};
+
+enum colors {
+    BLACK = 30,
+    RED,
+    GREEN,
+    YELLOW,
+    BLUE,
+    MAGENTA,
+    CYAN,
+    WHITE,
+    RESET = 0
 };
 
 Config *fsh_config;
@@ -68,6 +83,7 @@ char *get_user_name();
 char *get_host_name();
 char *get_cwd();
 int count_chars(const char *str, char c);
+int search_in_path(const char *binarypath);
 
 
 //runner.c
@@ -101,10 +117,11 @@ void change_var(const char *key, const char *newval);
 //terminal.c
 void enable_raw_mode();
 void disable_raw_mode();
-void set_text_color();
-void set_bg_color();
+void set_fg_color(uint8_t color);
+void set_bg_color(uint8_t color);
 int process_key_press();
 char *get_input_buf_str();
 char *get_input_buf_no_clear();
+char *style_text(const char *text);
 
 #endif

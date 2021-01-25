@@ -43,10 +43,23 @@ void fsh_read_config() {
     if (!conf) {
         fsh_logf(LOGLEVEL_LOG, "config file %s doens't exist, loading default config\n", configpath);
 
-        fsh_config->path = (char*) malloc(30);
-        fsh_config->ps1 = (char*) malloc(14);
+        char *syspath = getenv("PATH");
 
-        strcpy(fsh_config->path, "/bin:/usr/bin:/sbin:/usr/sbin");
+        if (!syspath) {
+            //Fall back to known paths
+            fsh_config->path = (char*) malloc(30);
+            strcpy(fsh_config->path, "/bin:/usr/bin:/sbin:/usr/sbin");
+        } else {
+            fsh_config->path = (char *) malloc(strlen(syspath) + 1);
+            strcpy(fsh_config->path, syspath);
+        }
+
+        fsh_config->ps1 = (char*) malloc(14);
+        set_bg_color(BLACK);
+        set_fg_color(WHITE);
+
+
+
         strcpy(fsh_config->ps1, "[\\u@\\h \\w]\\$ ");
     }/* else {
         fsh_logf(LOGLEVEL_LOG, "config file %s found, loading contents\n", configpath);

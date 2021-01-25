@@ -297,3 +297,34 @@ char *get_cwd() {
 
     return ret;
 }
+
+int search_in_path(const char *binarypath) {
+    FILE *incwd = fopen(binarypath, "r");
+    if (incwd) {
+        fclose(incwd);
+        return 1;
+    }
+
+    size_t pathlen = strlen(fsh_config->path);
+    char *pathcpy = (char*) malloc(pathlen + 1);
+    memcpy(pathcpy, fsh_config->path, pathlen + 1);
+
+    char *pathval = strtok(pathcpy, ":");
+    size_t binarypath_len = strlen(binarypath);
+
+    while(pathval) {
+        size_t pathval_len = strlen(pathval);
+        char *fullpath = (char*) malloc(strlen(binarypath) + strlen(pathval) + 2);
+        sprintf(fullpath, "%s/%s", pathval, binarypath);
+        FILE *file = fopen(fullpath, "r");
+        free(fullpath);
+
+        if (file) {
+            fclose(file);
+            return 1;
+        }
+        pathval = strtok(NULL, ":");
+    }
+    free(pathcpy);
+    return 0;
+}
