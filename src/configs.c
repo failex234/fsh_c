@@ -134,7 +134,8 @@ void fsh_read_config() {
 
         free(contents_ptr);
         fclose(conf);
-    } */
+    */
+    }
 
 
 }
