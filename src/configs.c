@@ -105,7 +105,7 @@ void fsh_read_config() {
 
 
         strcpy(fsh_config->ps1, "[\\u@\\h \\w]\\$ ");
-    } else {
+    } else /* {
         fsh_logf(LOGLEVEL_LOG, "config file found, loading contents\n");
 
         char **contents = key_and_val_split_file(conf, '=');
@@ -134,7 +134,7 @@ void fsh_read_config() {
 
         free(contents_ptr);
         fclose(conf);
-    }
+    } */
 
 
 }
