@@ -296,7 +296,8 @@ int process_key_press() {
         case PAGE_DOWN:
         case '\r':
         case '\n':
-            set_fg_color(WHITE);
+            set_fg_color(BLACK);
+            reset_color();
             printf("\n");
             cursor_pos_x = ps1_len;
             return 1;
@@ -374,7 +375,6 @@ int process_key_press() {
 void set_fg_color(uint8_t color) {
     if (fsh_config) {
         fsh_config->fg_color = color;
-        printf("\e[%dm", color);
     }
 }
 
@@ -382,6 +382,18 @@ void set_bg_color(uint8_t color) {
     if (fsh_config) {
         fsh_config->bg_color = color + 10;
     }
+}
+
+char *get_colors() {
+    char *color = (char *) malloc(9);
+    sprintf(color, "\e[%02d;%02dm", fsh_config->fg_color, fsh_config->bg_color);
+    return color;
+}
+
+char *get_single_color(int bg) {
+    char *color = (char *) malloc(7);
+    sprintf(color, "\e[%02dm", bg == 0 ? fsh_config->fg_color : fsh_config->bg_color);
+    return color;
 }
 
 void reset_color() {

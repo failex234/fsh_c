@@ -79,3 +79,62 @@ void make_config_folder() {
         mkdir(fsh_log_folder, 0700);
     }
 }
+
+void fsh_read_config() {
+    FILE *config = get_fsh_file("fsh_config", "r");
+    fsh_config = (Config*) malloc(sizeof(Config));
+
+    if (!config) {
+        fsh_logf(LOGLEVEL_LOG, "config file doesn't exist, loading default config");
+
+        char *syspath = getenv("PATH");
+
+        if (!syspath) {
+            //Fall back to known paths
+            fsh_config->path = (char*) malloc(30);
+            strcpy(fsh_config->path, "/bin:/usr/bin:/sbin:/usr/sbin");
+        } else {
+            fsh_config->path = (char *) malloc(strlen(syspath) + 1);
+            strcpy(fsh_config->path, syspath);
+        }
+
+        fsh_config->ps1 = (char*) malloc(14);
+        set_bg_color(WHITE);
+        set_fg_color(BLACK);
+
+
+
+        strcpy(fsh_config->ps1, "[\\u@\\h \\w]\\$ ");
+    } else {
+        fsh_logf(LOGLEVEL_LOG, "config file found, loading contents\n");
+
+        char **contents = key_and_val_split_file(conf, '=');
+
+        while (*contents) {
+            char *key = *contents;
+            contents++;
+            char *value = *contents;
+            contents++;
+
+            if (!strcmp(key, "PATH")) {
+                fsh_config->path = malloc(strlen(value) + 1);
+                strcpy(fsh_config->path, value);
+            } else if (!strcmp(key, "PS1")) {
+                fsh_config->ps1 = malloc(strlen(value) + 1);
+                strcpy(fsh_config->ps1, value);
+            }
+        }
+
+        char **contents_ptr = contents;
+
+        while(*contents) {
+            free(*contents);
+            contents++;
+        }
+
+        free(contents_ptr);
+        fclose(conf);
+    }
+
+
+}

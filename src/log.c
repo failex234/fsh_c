@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
+#include <time.h>
+#include <string.h>
 
 #include "fsh.h"
 
@@ -18,13 +20,25 @@ char *_fsh_get_loglevel_id() {
 
 void fsh_log(enum LOGLEVEL msg_type, const char *msg) {
     if (msg_type <= fsh_loglevel && fsh_log_file) {
-        fprintf(fsh_log_file, "%s %s\n", _fsh_get_loglevel_id(), msg);
+        time_t t = time(NULL);
+        struct tm *tms = localtime(&t);
+
+        char *strtime = strtok(asctime(tms), "\n");
+
+
+
+        fprintf(fsh_log_file, "%s %s %s\n", strtime, _fsh_get_loglevel_id(), msg);
         fflush(fsh_log_file);
     }
 }
 
 void fsh_logf(enum LOGLEVEL msg_type, const char *fmt, ...) {
     if (msg_type <= fsh_loglevel && fsh_log_file) {
+        time_t t = time(NULL);
+        struct tm *tms = localtime(&t);
+
+        char *strtime = strtok(asctime(tms), "\n");
+
         char *buf = (char*) malloc(2048);
 
         va_list arg;
@@ -34,7 +48,7 @@ void fsh_logf(enum LOGLEVEL msg_type, const char *fmt, ...) {
 
         va_end(arg);
 
-        fprintf(fsh_log_file, "%s %s\n", _fsh_get_loglevel_id(), buf);
+        fprintf(fsh_log_file, "%s %s %s\n", strtime, _fsh_get_loglevel_id(), buf);
         fflush(fsh_log_file);
     }
 }

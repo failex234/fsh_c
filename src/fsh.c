@@ -43,7 +43,7 @@ void fsh_loop() {
         ps1 = parse_ps1();
         ps1_len = strlen(ps1);
         cursor_pos_x = (int) ps1_len;
-        printf("%s", ps1);
+        fsh_printf("%s", ps1);
         fflush(stdout);
 
         //Get input and split it correctly so that we can

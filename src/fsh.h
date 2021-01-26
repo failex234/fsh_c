@@ -80,6 +80,7 @@ void openlog();
 void make_config_folder();
 FILE *get_fsh_file();
 char *get_fsh_path();
+void fsh_read_config();
 
 //utils.c
 char *read_line();
@@ -101,7 +102,6 @@ int execute(char **args);
 //io.c
 int fsh_printf(const char *fmt, ...);
 int fsh_printerr(const char *fmt, ...);
-void fsh_read_config();
 char **key_and_val_split_file(FILE *file, char seperator);
 
 //builtins.c
@@ -127,6 +127,8 @@ void enable_raw_mode();
 void disable_raw_mode();
 void set_fg_color(uint8_t color);
 void set_bg_color(uint8_t color);
+char *get_color();
+char *get_single_color(int bg);
 void reset_color();
 int process_key_press();
 char *get_input_buf_str();
